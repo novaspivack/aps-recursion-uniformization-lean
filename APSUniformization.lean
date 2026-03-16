@@ -1,3 +1,5 @@
+import APSUniformization.Imports
+
 /-!
 # APS Recursion Uniformization — Phase III Research
 
@@ -7,5 +9,3 @@ Depends on:
 - `aps-undecidability-interfaces-lean` (Phase I)
 - `aps-recursion-composition-uniformity-lean` (Phase II)
 -/
-
-import APSUniformization.Imports
