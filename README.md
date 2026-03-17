@@ -1,6 +1,18 @@
 # APS Recursion Uniformization
 
-Phase III of the APS interface program. Clone theory / universal algebra / iteration theory attack on the recursion–composition frontier in abstract IndexedAPS.
+**Phase III** of the APS interface program — the **final module** where the recursion–composition frontier is resolved. Clone theory / universal algebra / iteration theory attack on the recursion–composition frontier in abstract IndexedAPS.
+
+## Role in the Program
+
+This repository proves the **negative result**: indexed recursion does *not* imply indexed composition in abstract IndexedAPS. It also establishes the exact algebraic decomposition of composition (I_comp ⇔ FiniteTracking ∧ HasGluing). The countermodel `sepAPS` exhibits *section poverty under diagonal abundance*: it has diagonal identity, fixed points for every indexed representable total unary map, and yet fails composition because its section family is too poor to realize a tracker for a distinguished nonconstant function. Pointwise fixed-point existence is strictly weaker than uniform parameterized tracking in abstract indexed systems.
+
+## The Three Phases
+
+| Phase | Repository | Role |
+|-------|------------|------|
+| **Phase I** | [`aps-undecidability-interfaces-lean`](https://github.com/novaspivack/aps-undecidability-interfaces-lean) | Total-tier exactness, indexed interface taxonomy, separation lattice, Rice bifurcation |
+| **Phase II** | [`aps-recursion-composition-uniformity-lean`](https://github.com/novaspivack/aps-recursion-composition-uniformity-lean) | Corrected exactness (I_comp ⇔ SmnTrackingForRep), recursion taxonomy, regime bifurcation |
+| **Phase III** | `aps-recursion-uniformization-lean` (this repo) | **Final module:** exact algebraic decomposition (I_comp ⇔ FiniteTracking ∧ Gluing), separation theorem ∃ aps (I_rec(aps) ∧ ¬I_comp(aps)), countermodel sepAPS |
 
 ## Main result
 
