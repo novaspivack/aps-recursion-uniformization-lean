@@ -38,9 +38,9 @@ Phase III: aps-recursion-uniformization-lean  ← YOU ARE HERE
 - stdAPS has I_rec ∧ I_comp ∧ I_diag
 - Phase III exploration: Lawvere translation, section surjectivity hierarchy, collapse theorem, pairing shift, cardinality argument, finite countermodel (vacuous I_rec)
 
-## What Phase III (this repo) will do
+## What Phase III (this repo) does
 
-Determine whether the smn-generated operation system of an IndexedAPS has a local-to-global interpolation principle strong enough to turn full recursion into uniform tracking — or else exhibit an infinite countermodel where recursion holds without such interpolation.
+Phase III **resolved** the open question: I_rec does NOT imply I_comp in abstract IndexedAPS. The smn-generated operation system need not have a local-to-global interpolation principle strong enough to turn full recursion into uniform tracking — an infinite countermodel (`sepAPS`) exhibits recursion without composition.
 
 **Primary lens:** Clone theory / universal algebra (sections, projections, local agreement, global term realization)
 
@@ -48,20 +48,25 @@ Determine whether the smn-generated operation system of an IndexedAPS has a loca
 
 **Negative lens:** Model-theoretic infinite countermodel construction
 
+### Phase III established (0 sorry, 0 axioms)
+
+- **Clone dictionary:** I_comp ↔ clone surjectivity; section surj ↔ projection surj; finite tracking ↔ local interpolation
+- **Interpolation exactness:** I_comp ↔ HasFiniteTracking ∧ HasGluing
+- **Parameter identity:** I_comp ↔ ParameterIdentity; I_rec ↔ PreiterationAxiom
+- **Compactness schema:** Finite consistency, countermodel notions, obstruction formalized
+- **Synthesis:** recursion_uniformization_theorem, section_surjectivity_characterisation
+- **Separation theorem:** ∃ aps, I_rec(aps) ∧ ¬I_comp(aps). Countermodel: `sepAPS` in `Separation.lean`. See [FINAL_STATUS_AND_HANDOFF.md](FINAL_STATUS_AND_HANDOFF.md).
+
 ## File locations
 
 | Repo | Path (local) | Key artifacts |
 |------|--------------|---------------|
 | Phase I | `../aps-undecidability-interfaces-lean` | APSMinimalInterface, paper |
 | Phase II | `../aps-recursion-composition-uniformity-lean` | APSRecComp, PHASE_III_STATUS_AND_HANDOFF.md |
-| Phase III | `.` (this repo) | APSUniformization, SPEC_V2.md |
+| Phase III | `.` (this repo) | APSUniformization, FINAL_STATUS_AND_HANDOFF.md, NAVIGATION.md, project_history/ |
 
 ## Handoff document
 
-The comprehensive Phase II + Phase III status and handoff is in the Phase II repo:
+**Canonical Phase III status:** [FINAL_STATUS_AND_HANDOFF.md](FINAL_STATUS_AND_HANDOFF.md) — separation proved, story arc, theorem inventory, resolution.
 
-```
-../aps-recursion-composition-uniformity-lean/PHASE_III_STATUS_AND_HANDOFF.md
-```
-
-A copy is preserved in this repo as `HANDOFF_FROM_PHASE_II.md` for reference.
+Phase II handoff copy and historical specs (SPEC_V2–V5) are in `project_history/`.

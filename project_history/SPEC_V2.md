@@ -1,5 +1,11 @@
 # Phase III Research Spec v2
 
+**Location:** `project_history/SPEC_V2.md`
+
+**Resolution:** The bare-APS program is **closed**. I_rec does NOT imply I_comp. Separation proved via countermodel `sepAPS`. See [FINAL_STATUS_AND_HANDOFF.md](../FINAL_STATUS_AND_HANDOFF.md) for the canonical resolution.
+
+---
+
 ## Clone Theory / Universal Algebra / Iteration Theory Attack Plan
 
 ### Target: the recursion–composition frontier in abstract IndexedAPS

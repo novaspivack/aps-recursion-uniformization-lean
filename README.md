@@ -2,6 +2,16 @@
 
 Phase III of the APS interface program. Clone theory / universal algebra / iteration theory attack on the recursion–composition frontier in abstract IndexedAPS.
 
+## Main result
+
+**Separation theorem:** I_rec does NOT imply I_comp in abstract IndexedAPS.
+
+∃ aps : IndexedAPS, I_rec(aps) ∧ ¬I_comp(aps)
+
+Proved in Lean with **0 axioms, 0 sorry.** Countermodel: `sepAPS` in `Separation.lean`. See [FINAL_STATUS_AND_HANDOFF.md](FINAL_STATUS_AND_HANDOFF.md) §9a for the clean theorem narrative.
+
+**Algebraic decomposition:** I_comp ⟺ FiniteTracking ∧ HasGluing (main Phase III theorem).
+
 ## Dependencies
 
 - **Phase I:** `aps-undecidability-interfaces-lean` (APSMinimalInterface)
@@ -15,18 +25,12 @@ lake exe cache get
 lake build
 ```
 
-## Mission
-
-Determine whether the smn-generated operation system of an IndexedAPS has a local-to-global interpolation principle strong enough to turn full recursion into uniform tracking — or else exhibit an infinite countermodel where recursion holds without such interpolation.
-
 ## Documentation
 
-- `REPO_MAP.md` — Dependency chain, what each phase established
-- `SPEC_V2.md` — Full research spec (workstreams, theorem targets)
-- `HANDOFF_FROM_PHASE_II.md` — Reference to Phase II handoff
+- **FINAL_STATUS_AND_HANDOFF.md** — Canonical handoff: full narrative, story arc, clean countermodel (§9a), resolution status
+- **REPO_MAP.md** — Dependency chain, what each phase established
+- **project_history/** — Historical specs (SPEC_V2–V5) and Phase II handoff copy
 
 ## Paper
 
-The unified paper (Phase I + Phase II) lives in the Phase I repo:
-
-`../aps-undecidability-interfaces-lean/paper/01_Minimal_Interfaces/Minimal_Interfaces_for_Undecidability.pdf`
+The final paper lives in this repo: `paper/Composition_FT_Gluing_Separation.pdf`. See `paper/notes/PAPER_LOCATION.md`.

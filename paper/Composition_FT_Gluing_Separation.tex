@@ -1,0 +1,831 @@
+\documentclass[11pt]{article}
+\input{../suite_preamble}
+\input{../suite_macros}
+
+\title{Composition as Finite Tracking plus Gluing,\\and its Separation from Recursion\\in Abstract Indexed Programming Systems}
+\author{Nova Spivack\\Independent Researcher}
+\date{March 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We study the relation between recursion and composition in abstract indexed programming systems.  In standard computability-theoretic models these notions travel together, but at the level of abstract indexed partial semantics it is not a priori clear how much structure is really forced by the recursion theorem.  We give two main results.
+
+First, we prove an exact algebraic characterization of indexed representable composition:
+\[
+\IcompIdx \;\Longleftrightarrow\; \HasFiniteTracking \wedge \HasGluing.
+\]
+Thus composition splits cleanly into a \emph{local} interpolation component (finite tracking) and a \emph{global} amalgamation component (gluing).  This sharpens the corrected exactness theorem
+\[
+\IcompIdx \;\Longleftrightarrow\; \SmnTrackingForRep
+\]
+by identifying the internal algebraic content of uniform tracking.
+
+Second, we prove that indexed recursion does \emph{not} imply indexed composition:
+\[
+\exists \aps\; \bigl(\IrecIdx(\aps) \wedge \neg \IcompIdx(\aps)\bigr).
+\]
+The countermodel \(\sepAPS\) exhibits \emph{section poverty under diagonal abundance}, as realized by the countermodel architecture: it has diagonal identity \(\smn(x,x)=x\), fixed points for every indexed representable total unary map, and yet fails composition because its section family is too poor to realize a tracker for a distinguished nonconstant representable function \(g_{\mathrm{val}}\).  The separation shows that pointwise fixed-point existence is strictly weaker than uniform parameterized tracking in abstract indexed systems.
+
+These results resolve the recursion--composition frontier negatively in the abstract setting.  The final separation theorem and its supporting realization are machine-checked in Lean~4 with zero additional axioms and zero \texttt{sorry}.
+\end{abstract}
+
+\keywords{acceptable programming systems, recursion theorem, s-m-n theorem, compositionality, uniform tracking, abstract computability, interface minimality, Lean 4 formalization}
+
+\amsclassification{03D25, 03F40, 68Q05}
+
+\tableofcontents
+
+\section{Introduction}\label{sec:introduction}
+
+Classical computability theory is usually developed inside concrete frameworks---Turing machines, partial recursive functions, acceptable numberings, or equivalent semantic codings \cite{Kleene1938,Rice1953,Rogers1958,Rogers1987,Odifreddi1989}.  In those settings, several structural phenomena appear tightly coupled: parameterization, composition, recursion/fixed-point theorems, Rice-style undecidability, and halting undecidability.  Once one strips away the concrete implementation details and asks for the \emph{minimal abstract structure} supporting each phenomenon, the picture becomes more delicate.
+
+This paper concerns one specific frontier in that landscape: the relation between indexed recursion and indexed composition in abstract indexed programming systems.  The central question is:
+
+\begin{quote}
+Does the indexed recursion theorem force indexed representable composition?
+\end{quote}
+
+For a substantial portion of the development, the evidence cuts in both directions.  Standard models satisfy both properties.  Several positive proof routes suggest that recursion should be rich enough to generate composition.  At the same time, each such route encounters the same obstruction: the difference between pointwise self-reference and uniform parameterized tracking.
+
+The final answer is negative.  Indexed recursion does \emph{not} imply indexed composition in abstract indexed programming systems.  The paper proves this by combining an exact structural decomposition of composition with a concrete countermodel.
+
+\subsection{Main results}
+
+The paper establishes two main theorems.  \textbf{Exact composition anatomy:} We identify the exact algebraic content of indexed composition:
+\[
+\IcompIdx \;\Longleftrightarrow\; \HasFiniteTracking \wedge \HasGluing.
+\]
+Here \(\HasFiniteTracking\) says that every representable unary map can be tracked correctly on every finite set of parameters, while \(\HasGluing\) says that such finite local trackers can be amalgamated into a single global tracker.  \textbf{Strict separation from recursion:} We construct an indexed abstract programming system \(\sepAPS\) such that
+\[
+\IrecIdx(\sepAPS) \quad\text{but}\quad \neg \IcompIdx(\sepAPS).
+\]
+Thus the recursion theorem is strictly weaker than representable composition in the abstract indexed setting.  Together, these theorems resolve the recursion--composition frontier in the strongest possible way: composition is exactly analyzed, and recursion is shown not to force it.
+
+\begin{theorem}[Main separation theorem]\label{thm:main-separation}
+There exists an indexed abstract programming system \(\aps\) such that
+\[
+\IrecIdx(\aps) \wedge \neg \IcompIdx(\aps).
+\]
+\end{theorem}
+\Cref{sec:separation} proves this theorem by constructing the countermodel \(\sepAPS\).
+
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Exact composition theorem:}
+  \(\IcompIdx \iff \HasFiniteTracking \wedge \HasGluing\).
+\item \textbf{Separation theorem:}
+  \(\exists \aps,\ (\IrecIdx(\aps) \wedge \neg \IcompIdx(\aps))\).
+\item \textbf{Interpretation:} Recursion is pointwise fixed-point existence; composition is uniform tracking.  The classical coincidence of the two in standard models depends on additional structure not present in bare IndexedAPS.
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Result & Meaning \\
+\midrule
+\(\IcompIdx \iff \SmnTrackingForRep\) & corrected exactness \\
+\(\IcompIdx \iff \HasFiniteTracking \wedge \HasGluing\) & algebraic decomposition \\
+\(\exists \aps,\ (\IrecIdx(\aps) \wedge \neg \IcompIdx(\aps))\) & strict separation \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The first two lines identify the exact internal anatomy of composition; the third shows that recursion remains strictly weaker even after that anatomy is exposed.  This is the central structural lesson of the paper: exact decomposition on the composition side and strict non-derivability on the recursion side.  The paper first identifies exactly what composition is, and then proves that recursion alone is not enough to force it.
+
+\subsection{Why the implication looked plausible}
+
+The negative resolution is not cheap or accidental.  A substantial amount of structure supports the idea that recursion might imply composition.
+
+\begin{enumerate}[label=(\roman*),leftmargin=2em]
+\item In standard computability models, recursion and composition coexist.
+\item The sharp exactness theorem
+\[
+\IcompIdx \;\Longleftrightarrow\; \SmnTrackingForRep
+\]
+shows that composition is exactly uniform \(s\)-\(m\)-\(n\)-tracking for representable functions.
+\item Several positive attack routes suggest that recursion might generate the missing uniformity:
+  section surjectivity, finite tracking, Baire-category arguments on diagonal fibers, and failure-set uniformization.
+\end{enumerate}
+
+What the final countermodel shows is that all of these positive routes were detecting a \emph{real structural issue}, but not one forced by bare recursion itself.  The key distinction is between:
+
+\begin{itemize}[leftmargin=2em]
+\item \emph{diagonal abundance / fixed-point ease}, and
+\item \emph{section richness / global tracking power}.
+\end{itemize}
+
+The countermodel has the former and lacks the latter.
+
+\subsection{Paper roadmap}
+
+The paper is organized as follows.
+
+\begin{itemize}[leftmargin=2em]
+\item \Cref{sec:background} fixes the indexed setting and the main interface predicates.
+\item \Cref{sec:composition} recalls the corrected exactness theorem for composition and then proves the stronger algebraic decomposition
+\[
+\IcompIdx \iff \HasFiniteTracking \wedge \HasGluing.
+\]
+\item \Cref{sec:plausibility} explains why the implication looked plausible and summarizes the obstruction profile.
+\item \Cref{sec:separation} presents the countermodel \(\sepAPS\) and proves
+\[
+\IrecIdx(\sepAPS) \wedge \neg \IcompIdx(\sepAPS).
+\]
+\item \Cref{sec:consequences} extracts the conceptual consequences: the recursion theorem is strictly weaker than composition, and the classical coincidence of the two in standard models depends on additional hidden structure.
+\item \Cref{sec:artifact} records the machine-checked artifacts and repository layout.
+\end{itemize}
+
+\section{Background: indexed abstract programming systems}\label{sec:background}
+
+We work throughout with indexed unary partial semantics.  We retain the interface notation from the earlier formal development (\(\IcompIdx\), \(\IrecIdx\), \(\HasFiniteTracking\), \(\HasGluing\), etc.).
+
+\begin{definition}[Indexed abstract programming system]
+An \emph{indexed abstract programming system} is a structure
+\[
+\aps = (\phiaps,\smn)
+\]
+where
+\[
+\phiaps : \NN \to \NN \pfun \NN
+\]
+assigns to each code \(e\) a partial unary function, and
+\[
+\smn : \NN \to \NN \to \NN
+\]
+satisfies the \(s\)-\(m\)-\(n\) specification
+\[
+\phiaps_{\smn(e,x)}(n)=\phiaps_e(\langle x,n\rangle)
+\qquad\text{for all }e,x,n.
+\]
+\end{definition}
+
+Thus \(\smn(e,x)\) is the \(x\)-section of the binary behavior coded extensionally by \(e\).
+
+\begin{definition}[Indexed representable unary map]
+A total unary map \(h:\NN\to\NN\) is \emph{indexed representable} in \(\aps\) if there exists \(e\) such that
+\[
+\forall x,\ \phiaps_e(x)=h(x).
+\]
+We write \(\RepUnaryIdx(\aps,h)\).
+\end{definition}
+
+We next recall the main interface predicates.
+
+\begin{definition}[Indexed representable composition]
+\(\IcompIdx(\aps)\) means:
+for every indexed representable \(h:\NN\to\NN\), there exists \(k\) such that
+\[
+\forall x\,n,\ \phiaps_k(\langle x,n\rangle)=\phiaps_{h(x)}(n).
+\]
+Equivalently, a single code \(k\) uniformly tracks the family \(x \mapsto h(x)\).
+\end{definition}
+
+\begin{definition}[Indexed recursion theorem]
+\(\IrecIdx(\aps)\) means:
+for every \(h:\NN\to\NN\), if \(x\mapsto h(\smn(x,x))\) is indexed representable, then there exists \(e\) such that
+\[
+\forall n,\ \phiaps_e(n)=\phiaps_{h(e)}(n).
+\]
+\end{definition}
+
+\begin{definition}[Indexed diagonal closure]
+\(\IdiagIdx(\aps)\) means:
+for every indexed representable \(h:\NN\to\NN\), the diagonalized map
+\[
+x \mapsto h(\smn(x,x))
+\]
+is indexed representable.
+\end{definition}
+
+The key conceptual point is immediate:
+
+\begin{quote}
+\(\IrecIdx\) produces one fixed-point index \(e\) for each qualifying \(h\).  
+\(\IcompIdx\) produces one code \(k\) whose entire family of sections tracks \(h(x)\) uniformly in \(x\).
+\end{quote}
+
+The question is whether the former already forces the latter.
+
+\subsection{Corrected exactness for composition}
+
+The corrected exactness theorem
+\[
+\IcompIdx(\aps) \;\Longleftrightarrow\; \SmnTrackingForRep(\aps),
+\]
+where
+\[
+\SmnTrackingForRep(\aps)
+\]
+means that every indexed representable unary map \(h\) admits a single \(k\) with
+\[
+\forall x\,n,\ \phiaps_{\smn(k,x)}(n)=\phiaps_{h(x)}(n).
+\]
+
+This gives the correct exact meaning of indexed composition: it is exactly uniform \(s\)-\(m\)-\(n\)-tracking for representable maps.  The present paper strengthens this by decomposing that tracking property into local and global components.
+
+\section{Exact algebraic characterization of composition}\label{sec:composition}
+
+We now isolate the two ingredients of uniform tracking.
+
+\subsection{Finite tracking}
+
+\begin{definition}[Finite tracking]
+\(\HasFiniteTracking(\aps)\) means:
+for every indexed representable unary \(h:\NN\to\NN\) and every finite set \(F \subseteq \NN\), there exists \(k\) such that
+\[
+\forall x\in F\ \forall n,\ \phiaps_{\smn(k,x)}(n)=\phiaps_{h(x)}(n).
+\]
+\end{definition}
+
+Thus finite tracking is local interpolation: every representable family can be tracked correctly on any prescribed finite parameter set.
+
+\subsection{Gluing}
+
+\begin{definition}[Gluing]
+\(\HasGluing(\aps)\) means:
+whenever an indexed representable unary \(h:\NN\to\NN\) has local trackers on every finite set, there exists a single \(k\) such that
+\[
+\forall x\,n,\ \phiaps_{\smn(k,x)}(n)=\phiaps_{h(x)}(n).
+\]
+\end{definition}
+
+In other words, gluing is the passage from finite local correctness to global correctness.
+
+\subsection{Main exactness theorem}
+
+The central positive theorem of Phase~III is the following.
+
+\begin{theorem}[Composition as finite tracking plus gluing]\label{thm:main-exact}
+For every indexed abstract programming system \(\aps\),
+\[
+\IcompIdx(\aps)
+\;\Longleftrightarrow\;
+\HasFiniteTracking(\aps)\ \wedge\ \HasGluing(\aps).
+\]
+\end{theorem}
+(Lean: \texttt{comp\_iff\_finite\_tracking\_and\_gluing}.)
+
+\begin{remark}
+The theorem separates the local content of composition (finite tracking) from the genuinely global content (gluing).  In particular, any attempt to derive composition from recursion must explain where gluing comes from.
+\end{remark}
+
+\begin{proof}[Proof idea]
+If \(\IcompIdx\) holds, then every representable unary map admits a global tracker \(k\), which in particular works on every finite set; hence finite tracking holds.  The same global tracker also witnesses gluing.
+
+Conversely, assume finite tracking and gluing.  Let \(h\) be indexed representable.  Finite tracking gives a correct local tracker on each finite set \(F\subseteq \NN\).  Applying gluing yields a single \(k\) correct on all of \(\NN\).  This is exactly \(\IcompIdx\).
+\end{proof}
+
+\begin{corollary}[Refined exactness]\label{cor:refined}
+For every \(\aps\),
+\[
+\IcompIdx(\aps)
+\;\Longleftrightarrow\;
+\SmnTrackingForRep(\aps)
+\;\Longleftrightarrow\;
+\HasFiniteTracking(\aps)\ \wedge\ \HasGluing(\aps).
+\]
+\end{corollary}
+
+This theorem is the conceptual heart of the positive side.  It says composition is not primitive or opaque: it has an exact local--global anatomy.  In particular, any implication from recursion to composition must explain not merely tracking, but why local tracking data can be globally amalgamated.
+
+\subsection{A surviving conditional positive theorem}
+
+Although recursion does not imply composition in general, one strong sufficient condition survives.
+
+\begin{theorem}[Conditional positive implication]\label{thm:conditional-positive}
+For every \(\aps\),
+\[
+\IrecIdx(\aps)\ \wedge\ \JointSectionSurjective(\aps)\ \wedge\ \HasGluing(\aps)
+\;\Rightarrow\;
+\IcompIdx(\aps).
+\]
+\end{theorem}
+
+This theorem remains mathematically correct and useful.  Its importance after the separation result is explanatory: it identifies exactly what extra structure (joint section surjectivity plus gluing) restores composition from recursion.  Thus the separation theorem does not trivialize the positive side; it shows instead that joint section richness and gluing are genuine additional hypotheses, not consequences of bare recursion.
+
+\section{Why the false implication looked plausible}\label{sec:plausibility}
+
+Before presenting the countermodel, it is worth explaining why the false implication looked plausible.  The obstruction profile discovered by several positive routes all pointed in the same direction and all ran into the same structural barrier.
+
+\subsection{The pairing-shift obstruction}
+
+The most persistent obstacle is the gap between
+\[
+\phiaps_e(\langle x,n\rangle)
+\quad\text{and}\quad
+\phiaps_e(n).
+\]
+The \(s\)-\(m\)-\(n\) axiom gives access to sections of a code via paired input, but composition requires a code whose paired behavior realizes a target family \(\phiaps_{h(x)}(n)\).  Repeatedly, positive proofs ran into the need to ``undo'' or transport across this pairing shift.  In the abstract setting, that transport is not forced by recursion alone.
+
+\subsection{Section-surjectivity intuition}
+
+A natural idea is that recursion might force enough section richness to realize every extensional class as some section \(k \mapsto \smn(k,x_0)\).  If such section surjectivity held broadly enough, one could build finite trackers and then, with gluing, obtain composition.
+
+This route never closed in the abstract setting.  The later countermodel shows why: diagonal abundance need not produce section richness.
+
+\subsection{Baire-category and failure-set routes}
+
+Other attacks reformulated the problem topologically or combinatorially.  In the Baire route, one studies fixed-point basins in diagonal fibers and asks whether topological largeness forces algebraic transport.  In the failure-set route, one studies
+\[
+F_k = \{x : [\smn(k,x)] \neq [h_0(x)]\},
+\]
+hoping to prove enough intersection or regularity to force a common witness of failure or success.
+
+These analyses were not wasted.  The historical obstruction they discovered is no longer a missing proof obligation; it is part of the explanatory profile later realized by the countermodel.  They correctly localized the obstruction profile:
+\begin{itemize}[leftmargin=2em]
+\item pairing shift,
+\item section poverty,
+\item local-vs-global uniformization,
+\item and the absence of forced gluing.
+\end{itemize}
+
+The countermodel shows that this obstruction profile is not merely a proof artifact.  It is the actual separation mechanism.
+
+\section{Separation theorem}\label{sec:separation}
+
+We now prove the main negative result.  The proof has three steps: classify the indexed representable total unary maps in \(\sepAPS\) (\Cref{lem:representables}), verify fixed points for each of them (\Cref{lem:fixedpoints}), and then show that \(g_{\mathrm{val}}\) admits no global tracker (\Cref{lem:no-tracker}).
+
+\begin{theorem}[Recursion does not imply composition]\label{thm:separation}
+There exists an indexed abstract programming system \(\sepAPS\) such that
+\[
+\IrecIdx(\sepAPS)
+\qquad\text{and}\qquad
+\neg \IcompIdx(\sepAPS).
+\]
+\end{theorem}
+(Lean: \texttt{I\_rec\_not\_implies\_I\_comp}.)
+
+\begin{remark}[Contrast with standard computability models]
+In standard acceptable-numbering models, recursion and composition coexist because section richness, evaluation structure, and uniform tracking are built into the coding architecture; \(\sepAPS\) shows that none of this is forced by the bare IndexedAPS axioms.
+\end{remark}
+
+The rest of this section explains the construction and proof.
+
+\subsection{Architecture of the countermodel}
+
+The countermodel is infinite; earlier finite model searches did not detect the separation.  The system \(\sepAPS\) has three kinds of indices.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Index & Semantic behavior & Role \\
+\midrule
+\(0\) & totally undefined & universal trivial fixed point \\
+\(1\) & \(g_{\mathrm{val}}\) & nonconstant self-sectioning function \\
+\(c+2\) & constant-\(c\) function & all constant total functions \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{proposition}[Diagonal identity in \(\sepAPS\)]\label{prop:diag-identity}
+For all \(x\),
+\[
+\smn(x,x)=x.
+\]
+\end{proposition}
+(Lean: \texttt{sep\_smn\_diag}.)
+This is the source of \emph{diagonal abundance}: fixed points are easy to obtain.
+
+\begin{proposition}[Section poverty for \(g_{\mathrm{val}}\)]\label{prop:section-poverty}
+No index in \(\sepAPS\) has paired behavior whose sections are undefined at \(x=0\) and defined at suitable nonzero parameters, and hence no index can track \(g_{\mathrm{val}}\).
+\end{proposition}
+In particular, every section family in \(\sepAPS\) is semantically uniform: either undefined everywhere or defined everywhere, whereas \(g_{\mathrm{val}}\) demands undefined behavior at \(x=0\) and defined behavior at other parameters.
+
+\subsection{The function \(g_{\mathrm{val}}\)}
+
+The nonconstant function \(g_{\mathrm{val}}:\NN\to\NN\) (notation inherited from the formal development) is defined by recursion on the pair-tree structure of \(\NN\).  Its crucial clauses are:
+\[
+g_{\mathrm{val}}(0)=0,
+\]
+\[
+g_{\mathrm{val}}(\langle 0,n\rangle)=0,
+\]
+\[
+g_{\mathrm{val}}(\langle 1,n\rangle)=g_{\mathrm{val}}(n),
+\]
+\[
+g_{\mathrm{val}}(\langle c+2,n\rangle)=c+2.
+\]
+
+The decisive property is the self-sectioning law
+\[
+g_{\mathrm{val}}(\langle 1,n\rangle)=g_{\mathrm{val}}(n).
+\]
+This places index \(1\) on the diagonal in a way compatible with the \(s\)-\(m\)-\(n\) structure while keeping \(g_{\mathrm{val}}\) nonconstant.
+
+\subsection{Representables in the model}
+
+\begin{lemma}[Indexed representable total unary maps]\label{lem:representables}
+A total unary map \(h:\NN\to\NN\) is indexed representable in \(\sepAPS\) (i.e., \(\RepUnaryIdx(\sepAPS,h)\)) iff either
+\[
+h=g_{\mathrm{val}}
+\qquad\text{or}\qquad
+h=\mathrm{const}_c
+\]
+for some \(c\in\NN\).
+\end{lemma}
+(Lean: \texttt{sep\_representable\_classification}.)
+
+\begin{proof}[Proof idea]
+Since \(\phiaps_0\) is nowhere defined, it does not represent any total unary map \(h:\NN\to\NN\).  Index \(1\) computes \(g_{\mathrm{val}}\).  Each index \(c+2\) computes the constant-\(c\) total map.  No other total behaviors occur.
+\end{proof}
+
+\subsection{Recursion theorem in the model}
+
+\begin{lemma}[Every representable map has a fixed point]\label{lem:fixedpoints}
+\(\IrecIdx(\sepAPS)\) holds.
+\end{lemma}
+
+\begin{proof}[Proof idea]
+By \Cref{lem:representables}, every indexed representable total unary \(h\) is either \(g_{\mathrm{val}}\) or a constant map.
+
+\textbf{Case \(h=g_{\mathrm{val}}\):} Take \(e=0\).  Since \(g_{\mathrm{val}}(0)=0\), we have
+\[
+\phiaps_0=\phiaps_{g_{\mathrm{val}}(0)}.
+\]
+
+\textbf{Case \(h=\mathrm{const}_c\):} If \(c=0\), take \(e=0\).  If \(c=1\), take \(e=1\).  If \(c\ge 2\), the constant map represented in \(\sepAPS\) is coded by index \(c\), whose semantic behavior is the constant-\((c-2)\) function.  Choosing \(e=c\) therefore gives \(h(e)=e\), so \(\phiaps_e=\phiaps_{h(e)}\).
+\end{proof}
+
+Thus recursion holds: every indexed representable total unary map has a fixed point.
+
+\subsection{Failure of composition}
+
+The negative side is witnessed by the nonconstant representable \(g_{\mathrm{val}}\).
+
+\begin{lemma}[No tracker exists for \(g_{\mathrm{val}}\)]\label{lem:no-tracker}
+There is no \(k\) such that
+\[
+\forall x\,n,\ \phiaps_k(\langle x,n\rangle)=\phiaps_{g_{\mathrm{val}}(x)}(n).
+\]
+\end{lemma}
+(Lean: \texttt{sep\_no\_I\_comp}.)
+
+\begin{proof}[Proof idea]
+Suppose such a \(k\) existed.
+
+At \(x=0\), since \(g_{\mathrm{val}}(0)=0\) and \(\phiaps_0\) is nowhere defined, the tracker would have to satisfy
+\[
+\phiaps_k(\langle 0,0\rangle)=\bot.
+\]
+
+At \(x=\langle 3,0\rangle\), the value \(g_{\mathrm{val}}(\langle 3,0\rangle)\) lands in a defined constant class, so the same tracker would have to satisfy
+\[
+\phiaps_k(\langle \langle 3,0\rangle,0\rangle)=1
+\]
+(or the corresponding defined constant value in the formal indexing).
+
+But every code in \(\sepAPS\) has one of three globally uniform behaviors: nowhere defined, everywhere equal to \(g_{\mathrm{val}}\), or everywhere constant.  No index mixes undefined behavior at one paired input with defined behavior at another.  Contradiction.
+\end{proof}
+
+\begin{corollary}\label{cor:no-comp}
+\[
+\neg \IcompIdx(\sepAPS).
+\]
+\end{corollary}
+
+Combining \Cref{lem:fixedpoints,cor:no-comp} proves \Cref{thm:separation}.
+
+\subsection{Interpretation of the separation mechanism}
+
+The countermodel exhibits a precise phenomenon:
+
+\begin{quote}
+\emph{section poverty under diagonal abundance.}
+\end{quote}
+
+Every index lies on the diagonal, so fixed points are easy.  But the family of sections \(\smn(k,x)\) is too poor to realize the mixed undefined/defined pattern required to track \(g_{\mathrm{val}}\).  Thus recursion succeeds while composition fails.
+
+This is exactly the structural mechanism that the failed positive routes were sensing in different languages.
+
+\begin{remark}[Intentional sparsity of \(\sepAPS\)]
+The model is not an arbitrary pathological construction.  It is engineered to maximize diagonal accessibility (every index on the diagonal) while starving the section family (no index mixes undefined and defined behavior).  That design choice is precisely what realizes the separation.  Its role is not to exhibit arbitrary pathology, but to isolate exactly the structural ingredients that recursion does \emph{not} force.  Its importance is therefore structural rather than anecdotal.
+\end{remark}
+
+\begin{remark}[Why finite countermodels did not separate]
+Phase~II finite-model search (sizes \(N=2,\ldots,5\)) found no separation---the implication held in all finite APS models examined.  The final countermodel is infinite.  In finite models, the fixed-point reservoir is constrained; in \(\sepAPS\), the diagonal identity \(\smn(x,x)=x\) and the infinite supply of constant indices provide enough structure for recursion without forcing section richness.
+\end{remark}
+
+\section{Consequences and interpretation}\label{sec:consequences}
+
+The separation theorem clarifies the abstract theory sharply.
+
+\subsection{Consequences for abstract indexed computability}
+
+The first consequence is immediate.
+
+\begin{corollary}
+In abstract indexed programming systems,
+\[
+\IrecIdx \not\Rightarrow \IcompIdx.
+\]
+\end{corollary}
+
+Thus the recursion theorem and representable composition are genuinely distinct interface levels.
+
+In standard computability models, section richness and evaluation structure are abundant.  In \(\sepAPS\), diagonal abundance is maximized (every index lies on the diagonal), but section richness is minimized (no index mixes undefined and defined behavior).  Therefore the standard coincidence of recursion and composition depends on additional structure not present in bare IndexedAPS.
+
+\subsection{Interpretation of the failed positive routes}
+
+The Baire route detected the temptation to infer section richness from basin largeness.  The failure-set geometry detected the finite-intersection obstruction.  The gluing route detected the local/global split inside composition.  The countermodel validates these as real obstructions, not failed proof tricks.  These attempted implication proofs were the correct structural diagnostics of a false implication:
+\begin{itemize}[leftmargin=2em]
+\item local and finite tracking are meaningful invariants;
+\item gluing is a genuine global principle;
+\item failure sets capture semantic mismatch at the level of extensional classes;
+\item the pairing shift is a real algebraic obstruction.
+\end{itemize}
+
+\section{Machine-checked proof artifacts}\label{sec:artifact}
+
+The formal development is distributed across three repositories \cite{PhaseI,PhaseII,PhaseIII}.  The final separation theorem and its supporting realization (\texttt{GValRealization.lean}, \texttt{Separation.lean}) are verified with zero additional axioms and zero \texttt{sorry}.  Some historical exploratory modules (Baire-category attack, failure-set geometry) remain in the repository for explanatory and comparative value but are not load-bearing for the main results.
+
+\codeavailability{Lean 4 formalization: \cite{PhaseI,PhaseII,PhaseIII}.  Verified by \texttt{lake update \&\& lake exe cache get \&\& lake build}.}
+
+\section{Conclusion}\label{sec:conclusion}
+
+The recursion--composition frontier in abstract indexed programming systems is now resolved.
+
+\paragraph{Exact composition anatomy.}
+Indexed composition is exactly finite tracking plus gluing:
+\[
+\IcompIdx \iff \HasFiniteTracking \wedge \HasGluing.
+\]
+
+\paragraph{Strict separation from recursion.}
+Indexed recursion does not imply indexed composition:
+\[
+\exists \aps\;(\IrecIdx(\aps)\wedge \neg \IcompIdx(\aps)).
+\]
+
+\paragraph{Conceptual lesson.}
+The separation is driven by \emph{section poverty under diagonal abundance}.  The classical coincidence of recursion and composition in standard computability theory is not forced by the bare IndexedAPS axioms.  What standard models add is precisely the section richness and global uniformization missing in the abstract countermodel.
+
+\paragraph{Explanatory aftermath.}
+The failed positive routes retain conceptual value.  They identified, before the final countermodel was known, the exact obstruction profile that the separation realizes:
+\begin{itemize}[leftmargin=2em]
+\item pairing shift,
+\item section poverty,
+\item failure-set geometry,
+\item and gluing failure.
+\end{itemize}
+
+The final picture is therefore not merely negative but classification-level: the exact content of composition is known, and its non-derivability from recursion is witnessed concretely.  Together, the exact decomposition of composition and the separation theorem show that the true missing structure between recursion and composition is not fixed-point existence itself, but the global uniformization encoded by gluing and section richness.
+
+\appendix
+
+\section{Related Results from Earlier Phases}\label{app:related-results}
+
+This appendix records several results established in earlier phases of the project that are not part of the main theorem spine of the present paper, but which provide useful structural context for the recursion--composition separation.  They are omitted from the main body in order to keep the paper tightly focused on the exact algebraic decomposition of composition and the final separation theorem
+\[
+\exists \aps\;(\IrecIdx(\aps)\wedge \neg \IcompIdx(\aps)).
+\]
+Nevertheless, these earlier results remain mathematically significant and help situate the present paper inside the broader interface-minimality program.
+
+\subsection{Total-tier exactness for diagonal closure}\label{app:total-tier}
+
+Before the indexed partial setting, the project established an exact minimality theorem for diagonal closure in a total abstract programming system \(\APS=(\Program,\eval)\).
+
+\begin{definition}[Total representable unary map]
+A unary function \(f:\NN\to\NN\) is representable in \(\APS\) if there exists a program \(p\) such that
+\[
+\forall x,\ \eval(p,x)=f(x).
+\]
+\end{definition}
+
+\begin{definition}[Diagonal closure]
+Fix \(\smn:\NN\to\NN\to\NN\).  We say that \(\APS\) has diagonal closure with respect to \(\smn\) if
+\[
+\forall h:\NN\to\NN,\ \RepUnary(\APS,h)\Rightarrow
+\RepUnary(\APS, x \mapsto h(\smn(x,x))).
+\]
+\end{definition}
+
+\begin{theorem}[Exact minimality for total diagonal closure]\label{thm:app-total-diag}
+Assume \(\APS\) has representable identity and representable composition.  Then
+\[
+\HasDiagClosureWrt(\APS,\smn)
+\;\Longleftrightarrow\;
+\RepUnary(\APS, x \mapsto \smn(x,x)).
+\]
+\end{theorem}
+
+Thus, in the total tier, the diagonal map is not merely a convenient ingredient but the exact missing structure required for diagonal closure once composition and identity are present.
+
+\begin{remark}
+This theorem belongs to a different layer from the indexed recursion--composition frontier studied in the main body.  It is included here because it motivated the later indexed investigations: in the total tier, exactness is clean; in the indexed tier, the interaction among diagonalization, recursion, and uniform tracking turns out to be subtler.
+\end{remark}
+
+\subsection{Indexed separation lattice before the final separation theorem}\label{app:indexed-lattice}
+
+Prior to the final countermodel \(\sepAPS\), the project established several strict separations in the indexed setting.  These show that the interface landscape does not collapse even before the recursion--composition question is considered.
+
+\begin{theorem}[Diagonal closure does not imply indexed composition]\label{thm:app-diag-not-comp}
+There exists an indexed abstract programming system \(\aps\) such that
+\[
+\IdiagIdx(\aps)
+\qquad\text{but}\qquad
+\neg \IcompIdx(\aps).
+\]
+\end{theorem}
+
+\begin{theorem}[Diagonal closure does not imply indexed recursion]\label{thm:app-diag-not-rec}
+There exists an indexed abstract programming system \(\aps\) such that
+\[
+\IdiagIdx(\aps)
+\qquad\text{but}\qquad
+\neg \IrecIdx(\aps).
+\]
+\end{theorem}
+
+\begin{theorem}[Weak recursion does not imply full recursion]\label{thm:app-weak-not-full}
+There exists an indexed abstract programming system \(\aps\) such that
+\[
+\WeakRec(\aps)
+\qquad\text{but}\qquad
+\neg \FullRec(\aps).
+\]
+\end{theorem}
+
+These results already showed that the abstract indexed interface hierarchy is genuinely stratified.  The present paper strengthens that picture by proving that even full indexed recursion does not force indexed composition.
+
+\subsection{Corrected exactness and recursion taxonomy from Phase~II}\label{app:phase2}
+
+A central Phase~II result was the corrected exactness theorem for indexed composition.
+
+\begin{theorem}[Corrected exactness for indexed composition]\label{thm:app-corrected-exactness}
+For every indexed abstract programming system \(\aps\),
+\[
+\IcompIdx(\aps)
+\;\Longleftrightarrow\;
+\SmnTrackingForRep(\aps).
+\]
+\end{theorem}
+
+This theorem was the first sharp exactness result on the composition side.  It shows that indexed composition is exactly uniform \(s\)-\(m\)-\(n\)-tracking for indexed representable unary maps.
+
+Phase~II also identified three distinct recursion notions:
+
+\begin{itemize}[leftmargin=2em]
+\item \(\WeakRec(\aps)\): at least one qualifying map has a fixed point,
+\item \(\FullRec(\aps)\): every qualifying map has a fixed point, i.e. \(\IrecIdx(\aps)\),
+\item \(\SmnTrackingRec(\aps)\): every qualifying map admits a uniform \(s\)-\(m\)-\(n\)-tracker.
+\end{itemize}
+
+\begin{theorem}[Recursion taxonomy]\label{thm:app-rec-taxonomy}
+Under indexed diagonal closure,
+\[
+\SmnTrackingRec(\aps)\Rightarrow \IcompIdx(\aps)\Rightarrow \IrecIdx(\aps)\Rightarrow \WeakRec(\aps),
+\]
+and the final implication is strict.
+\end{theorem}
+
+The main paper resolves the remaining gap negatively by showing that \(\IrecIdx\not\Rightarrow \IcompIdx\).
+
+\subsection{Rice bifurcation and mechanism bifurcation}\label{app:rice}
+
+Earlier phases also established a broader undecidability landscape, especially for Rice-style phenomena.  This is not needed for the main recursion--composition theorem, but it is an important part of the surrounding interface program.
+
+\begin{theorem}[Rice bifurcation]\label{thm:app-rice-bifurcation}
+The abstract indexed Rice predicate splits into two mutually exclusive regimes:
+\[
+\IriceIdx \Rightarrow \VacuousRice \lor \StrongRice.
+\]
+\end{theorem}
+
+Here:
+\begin{itemize}[leftmargin=2em]
+\item \(\VacuousRice\) means Rice truth holds because the representable Boolean fragment is too weak to realize nontrivial extensional deciders;
+\item \(\StrongRice\) means Rice truth holds in a genuinely structural sense, with nontrivial representable Boolean behavior present.
+\end{itemize}
+
+The structural regime itself was shown to bifurcate:
+
+\begin{theorem}[Strong-Rice mechanism bifurcation]\label{thm:app-strong-rice-bif}
+The structural Rice regime splits into at least two distinct inhabited mechanisms:
+\begin{enumerate}[label=(\roman*),leftmargin=2em]
+\item a fixed-point path, witnessed by standard computability models;
+\item an alias path, witnessed by abstract systems with semantic aliasing but without full indexed composition.
+\end{enumerate}
+\end{theorem}
+
+\begin{remark}
+These bifurcation theorems are omitted from the main body because the present paper is about the recursion--composition frontier, not the full undecidability taxonomy.  But they provide important evidence that abstract indexed systems admit a richer structural landscape than one might naively expect from standard computability theory alone.
+\end{remark}
+
+\subsection{Historical obstruction analyses and failed positive routes}\label{app:historical-obstructions}
+
+Before the final countermodel was constructed, the project pursued several positive routes toward proving
+\[
+\IrecIdx \Rightarrow \IcompIdx.
+\]
+These routes are no longer active proof obligations, but they retain explanatory value because they correctly diagnosed the structural pressure points later realized by \(\sepAPS\).
+
+\paragraph{Finite alias strategy.}
+One idea was to produce a countermodel by adjoining finitely many aliases of a nonconstant extensional class.  This fails because an adversarial \(h\) can map all finitely many aliases away from the target class simultaneously.
+
+\paragraph{Infinite alias strategy.}
+A countably infinite alias reservoir still does not automatically succeed: an adversarial \(h\) can move all aliases at once unless the model is engineered much more carefully.
+
+\paragraph{Partial/divergence strategy.}
+Another idea was to exploit divergence as a wildcard for fixed points.  But the \(s\)-\(m\)-\(n\) specification tightly constrains divergence patterns: the section \(\smn(e,x)\) is not an independent object, but is determined by the paired behavior of \(\phi_e\).
+
+\paragraph{Restriction strategy.}
+Restricting a standard system to a proper \(s\)-\(m\)-\(n\)-ideal also proved ineffective: once the ideal is rich enough to support the standard recursion argument uniformly, it tends to recover the same composition structure one was trying to destroy.
+
+\paragraph{Baire-category route.}
+A major historical route attempted to prove that nonmeager fixed-point basins in diagonal fibers would force section surjectivity and hence composition.  The key intermediate statement \(T6\) was eventually shown to be false.  This was not wasted effort: it revealed that topological largeness does not by itself produce the algebraic transport needed to undo the pairing shift.
+
+\paragraph{Failure-set route.}
+Another route introduced the failure sets
+\[
+F_k = \{x : [\smn(k,x)] \neq [h_0(x)]\}
+\]
+and tried to prove enough intersection or regularity to force uniformization.  The final outcome was that several local coherence properties do hold, but pairwise or finite intersection richness is not forced in bare IndexedAPS.  This again turned out to be explanatory rather than merely frustrating: the countermodel \(\sepAPS\) realizes exactly the kind of section poverty those analyses were detecting.
+
+\begin{remark}
+The historical obstruction analyses belong to the explanatory aftermath of the final theorem.  They show that the negative resolution is not ad hoc.  The false implication looked plausible for good reasons, and the failed positive routes correctly located the real structural issue: recursion provides fixed-point abundance, but not the section richness and global amalgamation needed for composition.
+\end{remark}
+
+\subsection{How the present paper fits into the larger program}\label{app:fit}
+
+The larger project has three major layers.
+
+\begin{enumerate}[label=(\arabic*),leftmargin=2em]
+\item \textbf{Total-tier exactness:} exact minimality results for diagonal closure in total abstract programming systems;
+\item \textbf{Indexed interface landscape:} corrected exactness for composition, recursion taxonomy, separation lattice, and undecidability bifurcations;
+\item \textbf{Recursion--composition resolution:} exact algebraic decomposition of composition together with the final separation theorem
+\[
+\exists \aps\;(\IrecIdx(\aps)\wedge \neg \IcompIdx(\aps)).
+\]
+\end{enumerate}
+
+The present paper isolates the third layer and resolves it definitively.  The related results recorded in this appendix show that the separation theorem does not stand in isolation: it sits inside a broader interface-minimality program in which exactness, bifurcation, and separation all play essential roles.
+
+\begin{thebibliography}{99}
+
+\bibitem{Kleene1938}
+S.~C. Kleene.
+\newblock On notation for ordinal numbers.
+\newblock \emph{Journal of Symbolic Logic}, 3(4):150--155, 1938.
+\newblock DOI: 10.2307/2267778.
+
+\bibitem{Rice1953}
+H.~G. Rice.
+\newblock Classes of recursively enumerable sets and their decision problems.
+\newblock \emph{Transactions of the American Mathematical Society}, 74(2):358--366, 1953.
+\newblock DOI: 10.2307/1990888.
+
+\bibitem{Rogers1958}
+H.~Rogers Jr.
+\newblock G\"odel numberings of partial recursive functions.
+\newblock \emph{Journal of Symbolic Logic}, 23(3):331--341, 1958.
+\newblock DOI: 10.2307/2964505.
+
+\bibitem{Rogers1987}
+H.~Rogers Jr.
+\newblock \emph{Theory of Recursive Functions and Effective Computability}.
+\newblock MIT Press, Cambridge, MA, 1987.
+
+\bibitem{Odifreddi1989}
+P.~Odifreddi.
+\newblock \emph{Classical Recursion Theory}.
+\newblock North-Holland, Amsterdam, 1989.
+\newblock Studies in Logic and the Foundations of Mathematics, vol.~125.
+
+\bibitem{deMouraUllrich2021}
+L.~de Moura and S.~Ullrich.
+\newblock The Lean 4 theorem prover and programming language.
+\newblock In A.~Platzer and G.~Sutcliffe, editors, \emph{Automated Deduction -- CADE 28}, LNCS 12699, pages 625--635. Springer, 2021.
+\newblock DOI: 10.1007/978-3-030-79876-5\_37.
+
+\bibitem{Mathlib2020}
+The mathlib Community.
+\newblock The Lean mathematical library.
+\newblock In \emph{Proceedings of the 9th ACM SIGPLAN International Conference on Certified Programs and Proofs}, pages 367--381. ACM, 2020.
+\newblock DOI: 10.1145/3372885.3373824.
+
+\bibitem{PhaseI}
+N.~Spivack.
+\newblock APS undecidability interfaces (Phase~I).
+\newblock GitHub repository, 2024--2026.
+\newblock \url{https://github.com/novaspivack/aps-undecidability-interfaces-lean}.
+\newblock Accessed March 2026.
+
+\bibitem{PhaseII}
+N.~Spivack.
+\newblock APS recursion composition uniformity (Phase~II).
+\newblock GitHub repository, 2024--2026.
+\newblock \url{https://github.com/novaspivack/aps-recursion-composition-uniformity-lean}.
+\newblock Accessed March 2026.
+
+\bibitem{PhaseIII}
+N.~Spivack.
+\newblock APS recursion uniformization (Phase~III).
+\newblock GitHub repository, 2024--2026.
+\newblock \url{https://github.com/novaspivack/aps-recursion-uniformization-lean}.
+\newblock Accessed March 2026.
+
+\end{thebibliography}
+
+\end{document}

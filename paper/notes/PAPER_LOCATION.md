@@ -1,13 +1,15 @@
 # Paper Location
 
-The unified paper (Phase I + Phase II) lives in the Phase I repository:
+The final paper lives in this repository:
 
 ```
-../aps-undecidability-interfaces-lean/paper/01_Minimal_Interfaces/Minimal_Interfaces_for_Undecidability.pdf
+paper/Composition_FT_Gluing_Separation.pdf
 ```
 
-GitHub path: `paper/01_Minimal_Interfaces/Minimal_Interfaces_for_Undecidability.pdf` in the `aps-undecidability-interfaces-lean` repo.
+**Title:** Composition as Finite Tracking plus Gluing, and its Separation from Recursion in Abstract Indexed Programming Systems
 
-LaTeX source: `paper/01_Minimal_Interfaces/Minimal_Interfaces_for_Undecidability.tex`
+**LaTeX source:** `paper/Composition_FT_Gluing_Separation.tex`
 
-Phase II results are integrated into Sections 11–12 of that paper. Phase III (this repo) continues the clone theory / interpolation attack.
+**GitHub path:** `paper/Composition_FT_Gluing_Separation.pdf` in the `aps-recursion-uniformization-lean` repo.
+
+Phase I provides APSMinimalInterface. Phase II provides corrected exactness and regime bifurcation. Phase III (this repo) provides the exact algebraic decomposition, separation theorem, and countermodel.

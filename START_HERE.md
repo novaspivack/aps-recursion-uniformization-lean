@@ -1,21 +1,20 @@
-# Start Here — Phase III Continuation
+# Start Here — Phase III
 
-**Continue the recursion–composition attack in this repo.**
+**The recursion–composition question is resolved.**
 
-## Where we are
+## Resolution status (2025-03-16)
 
-- **Phase I** (`aps-undecidability-interfaces-lean`): Sufficiency I_comp + I_diag ⇒ I_rec
-- **Phase II** (`aps-recursion-composition-uniformity-lean`): Corrected exactness I_comp ⇔ SmnTrackingForRep, regime bifurcation, gap location, Phase III exploration (Lawvere, section surjectivity, collapse theorem, pairing shift)
-- **Phase III** (this repo): Clone theory / universal algebra / iteration theory attack
+**SEPARATION PROVED.** I_rec does NOT imply I_comp in abstract IndexedAPS. `Separation.lean` + `GValRealization.lean`: **0 axioms, 0 sorry.** The countermodel `sepAPS` uses a self-sectioning non-constant function (g_val) whose section poverty prevents uniform tracking. See [FINAL_STATUS_AND_HANDOFF.md](FINAL_STATUS_AND_HANDOFF.md) §9a for the clean theorem narrative.
+
+## Story arc
+
+1. **Phase I** (`aps-undecidability-interfaces-lean`): Sufficiency I_comp + I_diag ⇒ I_rec
+2. **Phase II** (`aps-recursion-composition-uniformity-lean`): Corrected exactness I_comp ⇔ SmnTrackingForRep, regime bifurcation, gap location
+3. **Phase III** (this repo): Algebraic decomposition I_comp ⟺ FiniteTracking ∧ HasGluing; **separation proved** via countermodel sepAPS
 
 ## What to do
 
-1. Read **REPO_MAP.md** — dependency chain, what each phase established
-2. Read **SPEC_V2.md** — workstreams A–E, theorem targets, acceptance criteria
-3. Read **HANDOFF_FROM_PHASE_II.md** — reference to full Phase II handoff
+1. Read **[FINAL_STATUS_AND_HANDOFF.md](FINAL_STATUS_AND_HANDOFF.md)** — full narrative, §9a clean countermodel, story arc
+2. Read **REPO_MAP.md** — dependency chain, what each phase established
+3. Read **project_history/** — historical specs (SPEC_V2–V5) for workstreams and theorem targets
 4. Build: `lake update && lake exe cache get && lake build`
-5. Attack **Tier 1** first: clone_dictionary_for_smn, finite_tracking_as_local_interpolation, section_surj_as_projection_surj
-
-## Key constraint
-
-Treat the open problem as a **uniformization problem**, not merely a self-reference problem. Prefer theorem targets that translate APS notions into algebraic/categorical ones.

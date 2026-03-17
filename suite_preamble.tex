@@ -1,0 +1,57 @@
+%===============================================================
+% APS Recursion Uniformization — Shared Preamble
+% Include via: \input{../suite_preamble}  (from paper subdir)
+% Adapted from aps-undecidability-interfaces-lean/paper/suite_preamble.tex
+%===============================================================
+
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{url}
+\urlstyle{tt}
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
+\usepackage{cleveref}
+
+\setlist[itemize]{leftmargin=2em}
+\setlist[enumerate]{leftmargin=2em}
+
+%---------------------------------------------------------------
+% S1: Uniform theorem environments, numbered by section
+%---------------------------------------------------------------
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{question}[theorem]{Question}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{principle}[theorem]{Principle}
+
+%---------------------------------------------------------------
+% S2: Keywords, AMS/MSC, Code availability
+%---------------------------------------------------------------
+\newcommand{\keywords}[1]{\par\vspace{0.5em}\noindent\textbf{Keywords:} #1\par\vspace{0.5em}}
+\newcommand{\amsclassification}[1]{\par\noindent\textbf{MSC 2020:} #1\par\vspace{0.5em}}
+\newcommand{\codeavailability}[1]{\par\noindent\textbf{Code/Data availability:} #1\par\vspace{0.5em}}
