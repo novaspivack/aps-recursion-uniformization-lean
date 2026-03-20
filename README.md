@@ -29,6 +29,18 @@ Proved in Lean with **0 axioms, 0 sorry.** Countermodel: `sepAPS` in `Separation
 - **Phase I:** `aps-undecidability-interfaces-lean` (APSMinimalInterface)
 - **Phase II:** `aps-recursion-composition-uniformity-lean` (APSRecComp)
 
+## Clone
+
+Phase III depends on Phase I and II via path. Clone all three as siblings:
+
+```bash
+mkdir -p ~/aps && cd ~/aps
+git clone https://github.com/novaspivack/aps-undecidability-interfaces-lean
+git clone https://github.com/novaspivack/aps-recursion-composition-uniformity-lean
+git clone https://github.com/novaspivack/aps-recursion-uniformization-lean
+cd aps-recursion-uniformization-lean
+```
+
 ## Build
 
 ```bash
