@@ -22,9 +22,9 @@ import APSUniformization.GluingHierarchy
 import APSUniformization.UniformizationPrinciples
 import APSUniformization.T6Counterexample
 import APSUniformization.Separation
--- NOTE: Countermodel.lean is NOT imported because extMinimalAPS does NOT have I_rec.
--- The countermodel design is flawed. See FINAL_STATUS_AND_HANDOFF.md §10 for details.
--- The question I_rec ⇒ I_comp remains OPEN.
+-- NOTE: Countermodel.lean is NOT imported — earlier `extMinimalAPS` attempt (not I_rec).
+-- See FINAL_STATUS_AND_HANDOFF.md (countermodel status / §9). The settled negative answer
+-- uses `sepAPS` in Separation.lean + GValRealization.lean, not Countermodel.lean.
 
 /-!
 # APS Recursion Uniformization — Phase III Research
