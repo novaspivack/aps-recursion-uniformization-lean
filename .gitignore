@@ -3,3 +3,11 @@
 /.lake/
 *.olean
 .DS_Store
+
+# LaTeX build artifacts (paper/)
+paper/*.aux
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.toc
