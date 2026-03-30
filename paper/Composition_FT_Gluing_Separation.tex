@@ -10,6 +10,7 @@
 \maketitle
 
 \begin{abstract}
+\raggedright
 We study the relation between recursion and composition in abstract indexed programming systems.  In standard computability-theoretic models these notions travel together, but at the level of abstract indexed partial semantics it is not a priori clear how much structure is really forced by the recursion theorem.  We give two main results.
 
 First, we prove an exact algebraic characterization of indexed representable composition:
@@ -29,11 +30,35 @@ Second, we prove that indexed recursion does \emph{not} imply indexed compositio
 The countermodel \(\sepAPS\) exhibits \emph{section poverty under diagonal abundance}, as realized by the countermodel architecture: it has diagonal identity \(\smn(x,x)=x\), fixed points for every indexed representable total unary map, and yet fails composition because its section family is too poor to realize a tracker for a distinguished nonconstant representable function \(g_{\mathrm{val}}\).  The separation shows that pointwise fixed-point existence is strictly weaker than uniform parameterized tracking in abstract indexed systems.
 
 These results resolve the recursion--composition frontier negatively in the abstract setting.  The final separation theorem and its supporting realization are machine-checked in Lean~4 with zero additional axioms and zero \texttt{sorry}.
+
+\textbf{Trust boundary:} Indexed separation and exactness claims are justified by the pinned Lean development; this PDF is exposition keyed to that artifact.
 \end{abstract}
 
 \keywords{acceptable programming systems, recursion theorem, s-m-n theorem, compositionality, uniform tracking, abstract computability, interface minimality, Lean 4 formalization}
 
 \amsclassification{03D25, 03F40, 68Q05}
+
+\codeavailability{%
+  Repository: \url{https://github.com/novaspivack/aps-recursion-uniformization-lean}.
+  Build: \texttt{lake build}.
+  Toolchain and module entry points are pinned in \texttt{lakefile.lean} and \texttt{MANIFEST.md} at the repository root.}
+
+\section{Premises, disagreement coordinates, and trust boundary}\label{sec:premises-aps-composition}
+\begin{keybox}{Where disagreement can (and cannot) live}
+\textbf{Formal spine.}
+The main separation and composition-anatomy theorems are justified by the Lean modules cited in this paper, not by informal roadmap claims alone.
+
+\medskip
+\textbf{Premise coordinates (for external readers).}
+{\raggedright
+\begin{itemize}[leftmargin=2em]
+\item \textbf{Abstract indexed systems.} Countermodels live in the minimal \texttt{IndexedAPS} interface; standard computability models typically satisfy stronger hypotheses.
+  \emph{Logical effect:} Rejecting the abstract countermodel does not refute classical recursion theory on concrete models.
+\item \textbf{Living repository.} Declaration names and default targets evolve with repository tags.
+  \emph{Logical effect:} Use the artifact appendix and the pinned \texttt{lakefile.lean} for reproduction.
+\end{itemize}
+\par}
+\end{keybox}
 
 \tableofcontents
 

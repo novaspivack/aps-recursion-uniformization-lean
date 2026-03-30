@@ -55,3 +55,33 @@
 \newcommand{\keywords}[1]{\par\vspace{0.5em}\noindent\textbf{Keywords:} #1\par\vspace{0.5em}}
 \newcommand{\amsclassification}[1]{\par\noindent\textbf{MSC 2020:} #1\par\vspace{0.5em}}
 \newcommand{\codeavailability}[1]{\par\noindent\textbf{Code/Data availability:} #1\par\vspace{0.5em}}
+
+\setlength{\hfuzz}{3pt}
+
+%---------------------------------------------------------------
+% Keybox (aligned with NEMS paper protocol §4.1 / premise boxes §3.3.1)
+%---------------------------------------------------------------
+\usepackage{needspace}
+\usepackage[most]{tcolorbox}
+\newenvironment{keybox}[1]{%
+  \Needspace*{8\baselineskip}%
+  \begin{tcolorbox}[
+    enhanced,
+    breakable=false,
+    colback=blue!5,
+    colframe=blue!45!black,
+    coltitle=black,
+    colbacktitle=blue!14,
+    boxrule=0.85pt,
+    arc=2.5pt,
+    left=9pt, right=9pt, top=6pt, bottom=6pt,
+    titlerule=0.55pt,
+    fonttitle=\bfseries,
+    title={#1},
+    before upper=\raggedright,
+    before skip=0.9\baselineskip,
+    after skip=0.9\baselineskip
+  ]%
+}{%
+  \end{tcolorbox}%
+}
