@@ -12,3 +12,7 @@ paper/*.log
 paper/*.out
 paper/*.toc
 paper/*.synctex.gz
+
+# Suite-level TeX shared files (not needed on public repo)
+suite_macros.tex
+suite_preamble.tex
