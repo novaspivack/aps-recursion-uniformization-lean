@@ -20,7 +20,7 @@ This repository proves the **negative result**: indexed recursion does *not* imp
 
 ∃ aps : IndexedAPS, I_rec(aps) ∧ ¬I_comp(aps)
 
-Proved in Lean with **0 axioms, 0 sorry.** Countermodel: `sepAPS` in `Separation.lean`. See [FINAL_STATUS_AND_HANDOFF.md](FINAL_STATUS_AND_HANDOFF.md) §9a for the clean theorem narrative.
+Proved in Lean with **0 axioms, 0 sorry.** Countermodel: `sepAPS` in `Separation.lean`. See [FINAL_STATUS_AND_HANDOFF.md](FINAL_STATUS_AND_HANDOFF.md) for the full theorem narrative.
 
 **Algebraic decomposition:** I_comp ⟺ FiniteTracking ∧ HasGluing (main Phase III theorem).
 
@@ -51,9 +51,8 @@ lake build
 
 ## Documentation
 
-- **FINAL_STATUS_AND_HANDOFF.md** — Canonical handoff: full narrative, story arc, clean countermodel (§9a), resolution status
+- **FINAL_STATUS_AND_HANDOFF.md** — Full narrative, story arc, clean countermodel, resolution status
 - **REPO_MAP.md** — Dependency chain, what each phase established
-- **project_history/** — Historical specs (SPEC_V2–V5) and Phase II handoff copy
 
 ## Paper
 
