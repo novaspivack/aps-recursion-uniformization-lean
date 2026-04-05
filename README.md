@@ -58,3 +58,6 @@ lake build
 ## Paper
 
 The final paper lives in this repo: `paper/Composition_FT_Gluing_Separation.pdf`. See `paper/notes/PAPER_LOCATION.md`.
+<!-- NOVA_ZPO_ZENODO_SOFTWARE_BEGIN -->
+**Archival software (Zenodo):** https://doi.org/10.5281/zenodo.19429235
+<!-- NOVA_ZPO_ZENODO_SOFTWARE_END -->
