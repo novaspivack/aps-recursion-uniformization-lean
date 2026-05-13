@@ -1,7 +1,7 @@
 # aps-recursion-uniformization-lean — Full artifact manifest
 
 **Toolchain:** leanprover/lean4 — pinned in `lean-toolchain` / `lakefile.lean`  
-**Mathlib:** v4.29.0-rc6 (via lake)  
+**Mathlib:** v4.29.1 (via lake)  
 **Build:** From this directory: `lake update && lake exe cache get && lake build`  
 **Root library import:** `APSUniformization.lean` (imports all production modules under `APSUniformization/` except `Countermodel.lean`; see root module note)  
 **Executable:** `Main.lean` (`lake exe aps_recursion_uniformization_lean`)  
@@ -15,7 +15,7 @@
 |------------|------|
 | `../aps-undecidability-interfaces-lean` | Phase I — frozen APS / undecidability interface (`APSMinimalInterface`, etc.) |
 | `../aps-recursion-composition-uniformity-lean` | Phase II — recursion–composition uniformity (`APSRecComp`) |
-| Mathlib 4 | `https://github.com/leanprover-community/mathlib4` @ `v4.29.0-rc6` (not duplicated in NEMS `Combined_Lean_Manifests.md`; assumed) |
+| Mathlib 4 | `https://github.com/leanprover-community/mathlib4` @ `v4.29.1` (not duplicated in NEMS `Combined_Lean_Manifests.md`; assumed) |
 
 Phase III imports Phase I/II via `APSUniformization/Imports.lean`. The NEMS suite concatenates **separate** `MANIFEST.md` files for Phase I, Phase II, and Phase III in dependency order — not Mathlib.
 
