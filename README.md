@@ -1,5 +1,23 @@
 # APS Recursion Uniformization
 
+
+## Research Program
+
+This repository is part of the **Reflexive Reality** research program by [Nova Spivack](https://www.novaspivack.com/).
+
+**What this formalizes:** APS foundation: composition, recursion, and uniformization in abstract indexed programming systems.
+
+| Link | Description |
+|------|-------------|
+| [Research page](https://www.novaspivack.com/research/) | Full index of all papers, programs, and Lean archives |
+| [Full abstracts](https://novaspivack.github.io/research/abstracts/#abs-b1-nems) | Complete abstract for this library's papers |
+| [Zenodo program hub](https://doi.org/10.5281/zenodo.19429270) | Citable DOI hub for the NEMS program |
+
+All results are machine-checked in Lean 4 with a zero-sorry policy on proof targets.
+See [MANIFEST.md](MANIFEST.md) for the sorry audit (if present).
+
+---
+
 **Phase III** of the APS interface program — the **final module** where the recursion–composition frontier is resolved. Clone theory / universal algebra / iteration theory attack on the recursion–composition frontier in abstract IndexedAPS.
 
 ## Role in the Program
